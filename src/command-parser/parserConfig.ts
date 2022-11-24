@@ -225,20 +225,16 @@ export const parserConfig = {
       '_mutually-exclusive-group-required-staking': {
         '--staking-path': {
           type: (path: string) => parseBIP32Path(path),
+          required: false,
           dest: 'stakingPath',
           help: 'Stake derivation path. Either this or staking script hash has to be specified.',
         },
         '--staking-script-hash': {
           type: (hashHex: string) => parseScriptHashHex(hashHex),
+          required: false,
           dest: 'stakingScriptHash',
           help: 'Stake derivation script hash in hex format',
         },
-      },
-      '--address-file': {
-        required: true,
-        type: (path: string) => parseAddressFile(path),
-        dest: 'address',
-        help: 'Input filepath of the address.',
       },
       ...derivationTypeArg,
     },

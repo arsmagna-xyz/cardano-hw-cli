@@ -15,6 +15,7 @@ import {
   TxWitnesses,
 } from '../transaction/types'
 import {
+  AddressType,
   BIP32Path,
   HexString,
   HwSigningData,
@@ -61,11 +62,13 @@ export const LedgerCryptoProvider: (transport: Transport) => Promise<CryptoProvi
 
   const showAddress = async (
     {
-      paymentPath, paymentScriptHash, stakingPath, stakingScriptHash, address,
+      paymentPath, paymentScriptHash, stakingPath, stakingScriptHash,
     }: ParsedShowAddressArguments,
   ): Promise<void> => {
     try {
-      const { addressType, networkId, protocolMagic } = getAddressAttributes(address)
+      const addressType: number = (stakingPath || stakingScriptHash) ? AddressType.BASE_PAYMENT_KEY_STAKE_KEY : AddressType.ENTERPRISE_KEY
+      const networkId = 0
+      const protocolMagic = 1097911063
 
       await ledger.showAddress({
         network: {
@@ -76,9 +79,7 @@ export const LedgerCryptoProvider: (transport: Transport) => Promise<CryptoProvi
           type: addressType,
           params: {
             spendingPath: paymentPath,
-            spendingScriptHashHex: paymentScriptHash,
             stakingPath,
-            stakingScriptHashHex: stakingScriptHash,
           },
         },
       })

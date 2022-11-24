@@ -33,6 +33,7 @@ export type SigningParameters = {
   tx?: Transaction,
   txBodyHashHex: string,
   hwSigningFileData: HwSigningData[],
+  paths: BIP32Path[],
   network: Network,
   era: CardanoEra,
   derivationType?: DerivationType,
@@ -51,6 +52,10 @@ export type CryptoProvider = {
     params: SigningParameters,
     changeOutputFiles: HwSigningData[],
   ) => Promise<TxWitnesses>,
+  exwitnessTx: (
+    params: SigningParameters,
+    changeOutputFiles: HwSigningData[],
+  ) => Promise<boolean>,
   getXPubKeys: (
     paths: BIP32Path[],
     derivationType?: DerivationType,

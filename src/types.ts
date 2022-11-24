@@ -195,6 +195,15 @@ export type ParsedTransactionWitnessArguments = {
   derivationType?: DerivationType,
 }
 
+export type ParsedETransactionWitnessArguments = {
+  command: CommandType.EMACS_WITNESS_TRANSACTION,
+  network: Network,
+  rawTxFileData?: RawTxFileData,
+  txFileData?: TxFileData,
+  paths: BIP32Path[],
+  derivationType?: DerivationType,
+}
+
 export type ParsedTransactionValidateRawArguments = {
   command: CommandType.VALIDATE_RAW_TRANSACTION,
   rawTxFileData: RawTxFileData,
@@ -256,6 +265,7 @@ export type ParsedArguments =
   | ParsedTransactionSignArguments
   | ParsedTransactionPolicyIdArguments
   | ParsedTransactionWitnessArguments
+  | ParsedETransactionWitnessArguments
   | ParsedTransactionValidateRawArguments
   | ParsedTransactionValidateArguments
   | ParsedTransactionTransformRawArguments

@@ -239,10 +239,10 @@ export const LedgerCryptoProvider: (transport: Transport) => Promise<CryptoProvi
           (stakeCredential as TxTypes.StakeCredentialKey).hash,
           stakeSigningFiles,
         )
-        if (path) {
+        if (true) {
           return {
             type: LedgerTypes.StakeCredentialParamsType.KEY_PATH,
-            keyPath: path,
+            keyPath: [2147485500, 2147485463, 2147483650, 2, 0],
           }
         }
         if (signingMode === SigningMode.PLUTUS_TRANSACTION) {
@@ -676,7 +676,8 @@ export const LedgerCryptoProvider: (transport: Transport) => Promise<CryptoProvi
       paymentSigningFiles,
       mintSigningFiles,
       multisigSigningFiles,
-    )
+    ).concat(params.paths)
+    // console.warn(additionalWitnessRequests)
 
     const response = await ledger.signTransaction({
       signingMode: signingModeToLedgerType(signingMode),
@@ -724,6 +725,16 @@ export const LedgerCryptoProvider: (transport: Transport) => Promise<CryptoProvi
   ): Promise<TxWitnesses> => {
     const ledgerWitnesses = await ledgerSignTx(params, changeOutputFiles)
     return createWitnesses(ledgerWitnesses, params.hwSigningFileData)
+  }
+
+  const exwitnessTx = async (
+    params: SigningParameters,
+    changeOutputFiles: HwSigningData[],
+  ): Promise<boolean> => {
+    const ledgerWitnesses = await ledgerSignTx(params, changeOutputFiles)
+    console.log('LEGWIT', ledgerWitnesses)
+    return true
+    // return createWitnesses(ledgerWitnesses, params.hwSigningFileData)
   }
 
   const prepareVoteAuxiliaryData = (
@@ -935,6 +946,7 @@ export const LedgerCryptoProvider: (transport: Transport) => Promise<CryptoProvi
     showAddress,
     signTx,
     witnessTx,
+    exwitnessTx,
     getXPubKeys,
     signOperationalCertificate,
     signVotingRegistrationMetaData,

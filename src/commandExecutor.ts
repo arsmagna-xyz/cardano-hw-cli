@@ -1,6 +1,6 @@
 import * as InteropLib from 'cardano-hw-interop-lib'
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid-noevents'
-import { CryptoProvider, SigningParameters } from './crypto-providers/types'
+import { CryptoProvider, SigningParameters, SigningMode } from './crypto-providers/types'
 import {
   constructTxFileOutput,
   constructHwSigningKeyOutput,
@@ -18,6 +18,7 @@ import {
   ParsedTransactionSignArguments,
   ParsedTransactionPolicyIdArguments,
   ParsedTransactionWitnessArguments,
+  ParsedETransactionWitnessArguments,
   ParsedVerificationKeyArguments,
   ParsedOpCertArguments,
   ParsedNodeKeyGenArguments,
@@ -143,6 +144,7 @@ const CommandExecutor = async () => {
       tx,
       txBodyHashHex: getTxBodyHash(txBody),
       hwSigningFileData: args.hwSigningFileData,
+      paths: [],
       network: args.network,
       era,
       derivationType: args.derivationType,
@@ -191,6 +193,7 @@ const CommandExecutor = async () => {
       tx,
       txBodyHashHex: getTxBodyHash(txBody),
       hwSigningFileData: args.hwSigningFileData,
+      paths: [],
       network: args.network,
       era,
       derivationType: args.derivationType,
@@ -201,6 +204,7 @@ const CommandExecutor = async () => {
     } = await cryptoProvider.witnessTx(signingParameters, args.changeOutputKeyFileData)
     const txWitnesses = [...byronWitnesses, ...shelleyWitnesses]
 
+    console.log('W', txWitnesses)
     const txWitnessOutputs: WitnessOutput[] = []
     for (let i = 0; i < args.hwSigningFileData.length; i += 1) {
       const signingFilePath = args.hwSigningFileData[i].path
@@ -223,6 +227,39 @@ const CommandExecutor = async () => {
         console.log(`Warning! A superfluous output file specified (${i + 1} of ${args.outFiles.length}), the file was not written to.`)
       }
     }
+  }
+
+  const createETxWitnesses = async (args: ParsedETransactionWitnessArguments) => {
+    let rawTx: InteropLib.RawTransaction | undefined
+    let tx: InteropLib.Transaction | undefined
+    if (args.rawTxFileData) {
+      // eslint-disable-next-line no-console,max-len
+      console.log('Warning! The --tx-body-file option is DEPRECATED and will be REMOVED in Oct 2022. Please use --tx-file instead (use --cddl-format when building transactions with cardano-cli).')
+
+      validateRawTxBeforeSigning(args.rawTxFileData.cborHex)
+      const rawTxCbor = Buffer.from(args.rawTxFileData.cborHex, 'hex')
+      rawTx = InteropLib.decodeRawTx(rawTxCbor)
+    } else {
+      validateTxBeforeSigning(args.txFileData!.cborHex)
+      const txCbor = Buffer.from(args.txFileData!.cborHex, 'hex')
+      tx = InteropLib.decodeTx(txCbor)
+    }
+
+    const txBody = (rawTx?.body ?? tx?.body)!
+    const era = (args.rawTxFileData?.era ?? args.txFileData?.era)!
+    const signingParameters: SigningParameters = {
+      signingMode: SigningMode.ORDINARY_TRANSACTION,
+      rawTx,
+      tx,
+      txBodyHashHex: getTxBodyHash(txBody),
+      hwSigningFileData: [],
+      paths: args.paths,
+      network: args.network,
+      era,
+      derivationType: args.derivationType,
+    }
+    validateWitnessing(signingParameters)
+    const wit = await cryptoProvider.exwitnessTx(signingParameters, [])
   }
 
   const createNodeSigningKeyFiles = async (args: ParsedNodeKeyGenArguments) => {
@@ -301,6 +338,7 @@ const CommandExecutor = async () => {
     createSignedTx,
     createTxPolicyId,
     createTxWitnesses,
+    createETxWitnesses,
     createNodeSigningKeyFiles,
     createSignedOperationalCertificate,
     createCatalystVotingKeyRegistrationMetadata,

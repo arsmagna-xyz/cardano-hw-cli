@@ -111,13 +111,6 @@ const txSigningArgs = {
       help: 'Input filepath of the tx. Use --cddl-format when building transactions with cardano-cli.',
     },
   },
-  '--hw-signing-file': {
-    dest: 'hwSigningFileData',
-    required: true,
-    action: 'append',
-    type: (path: string) => parseHwSigningFile(path),
-    help: 'Input filepath of the hardware wallet signing file.',
-  },
   '--change-output-key-file': {
     dest: 'changeOutputKeyFileData',
     action: 'append',
@@ -126,6 +119,17 @@ const txSigningArgs = {
     help: 'Input filepath of change output file.',
   },
   ...derivationTypeArg,
+}
+
+const txSigningFilesArgs = {
+  '--hw-signing-file': {
+    dest: 'hwSigningFileData',
+    required: true,
+    action: 'append',
+    type: (path: string) => parseHwSigningFile(path),
+    help: 'Input filepath of the hardware wallet signing file.',
+  },
+  ...txSigningArgs,
 }
 
 const opCertSigningArgs = {
@@ -264,8 +268,18 @@ export const parserConfig = {
       },
       ...derivationTypeArg,
     },
-    'witness': {
+    'exwitness': {
       ...txSigningArgs,
+      '--path': {
+        required: true,
+        action: 'append',
+        type: (path: string) => parseBIP32Path(path),
+        dest: 'paths',
+        help: 'Derivation path to the key to sign with.',
+      },
+    },
+    'witness': {
+      ...txSigningFilesArgs,
       '--out-file': {
         required: true,
         action: 'append',

@@ -88,7 +88,7 @@ const CommandExecutor = async () => {
 
     const xPubKeys = await cryptoProvider.getXPubKeys(paths, derivationType)
     // eslint-disable-next-line no-console
-    console.log(paths.map((path, index) => [path, xPubKeys[index]]))
+    console.log(JSON.stringify(paths.map((path, index) => [path, xPubKeys[index]])))
   }
 
   const createSigningKeyFile = async (
@@ -180,6 +180,7 @@ const CommandExecutor = async () => {
       const rawTxCbor = Buffer.from(args.rawTxFileData.cborHex, 'hex')
       rawTx = InteropLib.decodeRawTx(rawTxCbor)
     } else {
+      console.log('W')
       validateTxBeforeSigning(args.txFileData!.cborHex)
       const txCbor = Buffer.from(args.txFileData!.cborHex, 'hex')
       tx = InteropLib.decodeTx(txCbor)

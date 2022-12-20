@@ -55,7 +55,7 @@ export type CryptoProvider = {
   exwitnessTx: (
     params: SigningParameters,
     changeOutputFiles: HwSigningData[],
-  ) => Promise<boolean>,
+  ) => Promise<void>,
   getXPubKeys: (
     paths: BIP32Path[],
     derivationType?: DerivationType,

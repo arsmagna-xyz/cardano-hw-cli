@@ -652,10 +652,9 @@ const TrezorCryptoProvider: () => Promise<CryptoProvider> = async () => {
   const exwitnessTx = async (
     params: SigningParameters,
     changeOutputFiles: HwSigningData[],
-  ): Promise<boolean> => {
+  ): Promise<void> => {
     const trezorWitnesses = await trezorSignTx(params, changeOutputFiles)
     console.log('LEGWIT', trezorWitnesses)
-    return true
   }
 
   const prepareVoteAuxiliaryData = (

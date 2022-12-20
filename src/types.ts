@@ -198,7 +198,6 @@ export type ParsedTransactionWitnessArguments = {
 export type ParsedETransactionWitnessArguments = {
   command: CommandType.EMACS_WITNESS_TRANSACTION,
   network: Network,
-  rawTxFileData?: RawTxFileData,
   txFileData?: TxFileData,
   paths: BIP32Path[],
   derivationType?: DerivationType,

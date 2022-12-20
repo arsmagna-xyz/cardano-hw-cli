@@ -180,7 +180,6 @@ const CommandExecutor = async () => {
       const rawTxCbor = Buffer.from(args.rawTxFileData.cborHex, 'hex')
       rawTx = InteropLib.decodeRawTx(rawTxCbor)
     } else {
-      console.log('W')
       validateTxBeforeSigning(args.txFileData!.cborHex)
       const txCbor = Buffer.from(args.txFileData!.cborHex, 'hex')
       tx = InteropLib.decodeTx(txCbor)
@@ -232,22 +231,12 @@ const CommandExecutor = async () => {
 
   const createETxWitnesses = async (args: ParsedETransactionWitnessArguments) => {
     let rawTx: InteropLib.RawTransaction | undefined
-    let tx: InteropLib.Transaction | undefined
-    if (args.rawTxFileData) {
-      // eslint-disable-next-line no-console,max-len
-      console.log('Warning! The --tx-body-file option is DEPRECATED and will be REMOVED in Oct 2022. Please use --tx-file instead (use --cddl-format when building transactions with cardano-cli).')
-
-      validateRawTxBeforeSigning(args.rawTxFileData.cborHex)
-      const rawTxCbor = Buffer.from(args.rawTxFileData.cborHex, 'hex')
-      rawTx = InteropLib.decodeRawTx(rawTxCbor)
-    } else {
-      validateTxBeforeSigning(args.txFileData!.cborHex)
-      const txCbor = Buffer.from(args.txFileData!.cborHex, 'hex')
-      tx = InteropLib.decodeTx(txCbor)
-    }
+    validateTxBeforeSigning(args.txFileData!.cborHex)
+    const txCbor = Buffer.from(args.txFileData!.cborHex, 'hex')
+    const tx = InteropLib.decodeTx(txCbor)
 
     const txBody = (rawTx?.body ?? tx?.body)!
-    const era = (args.rawTxFileData?.era ?? args.txFileData?.era)!
+    const era = args.txFileData?.era!
     const signingParameters: SigningParameters = {
       signingMode: SigningMode.ORDINARY_TRANSACTION,
       rawTx,

@@ -731,11 +731,9 @@ export const LedgerCryptoProvider: (transport: Transport) => Promise<CryptoProvi
   const exwitnessTx = async (
     params: SigningParameters,
     changeOutputFiles: HwSigningData[],
-  ): Promise<boolean> => {
+  ) => {
     const ledgerWitnesses = await ledgerSignTx(params, changeOutputFiles)
     console.log('LEGWIT', ledgerWitnesses)
-    return true
-    // return createWitnesses(ledgerWitnesses, params.hwSigningFileData)
   }
 
   const prepareVoteAuxiliaryData = (

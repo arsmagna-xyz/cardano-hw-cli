@@ -1,6 +1,6 @@
 import * as InteropLib from 'cardano-hw-interop-lib'
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid-noevents'
-import { CryptoProvider, SigningParameters, SigningMode } from './crypto-providers/types'
+import { CryptoProvider, SigningParameters } from './crypto-providers/types'
 import {
   constructTxFileOutput,
   constructHwSigningKeyOutput,
@@ -143,7 +143,6 @@ const CommandExecutor = async () => {
       tx,
       txBodyHashHex: getTxBodyHash(txBody),
       hwSigningFileData: args.hwSigningFileData,
-      paths: [],
       network: args.network,
       era,
       derivationType: args.derivationType,
@@ -192,7 +191,6 @@ const CommandExecutor = async () => {
       tx,
       txBodyHashHex: getTxBodyHash(txBody),
       hwSigningFileData: args.hwSigningFileData,
-      paths: [],
       network: args.network,
       era,
       derivationType: args.derivationType,

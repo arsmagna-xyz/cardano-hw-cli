@@ -111,6 +111,19 @@ const txSigningArgs = {
       help: 'Input filepath of the tx. Use --cddl-format when building transactions with cardano-cli.',
     },
   },
+  '_mutually-exclusive-group-required-signing-files': {
+    '--hw-signing-file': {
+      dest: 'hwSigningFileData',
+      action: 'append',
+      type: (path: string) => parseHwSigningFile(path),
+      help: 'Input filepath of the hardware wallet signing file.',
+    },
+    '--sign-request': {
+      type: (str: string) => JSON.parse(str).map((request) => extractHWSigningData(request)),
+      dest: 'hwSigningFileData',
+      help: 'JSON string with the hardware wallet signature request',
+    },
+  },
   '--change-output-key-file': {
     dest: 'changeOutputKeyFileData',
     action: 'append',
@@ -259,25 +272,7 @@ export const parserConfig = {
       },
       ...derivationTypeArg,
     },
-    'exwitness': {
-      ...txSigningArgs,
-      '--sign-request': {
-        required: true,
-        type: (str: string) => JSON.parse(str).map((request) => extractHWSigningData(request)),
-        dest: 'hwSigningFileData',
-        help: 'JSON string with signature request',
-      },
-    },
-    'witness': {
-      ...txSigningArgs,
-      '--hw-signing-file': {
-        dest: 'hwSigningFileData',
-        required: true,
-        action: 'append',
-        type: (path: string) => parseHwSigningFile(path),
-        help: 'Input filepath of the hardware wallet signing file.',
-      },
-    },
+    'witness': txSigningArgs,
     'validate-raw': {
       '--tx-body-file': {
         required: true,

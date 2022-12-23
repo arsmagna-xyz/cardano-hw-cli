@@ -185,7 +185,7 @@ export type ParsedTransactionPolicyIdArguments = {
 // exctly one of rawTxFileData vs. txFileData should be present
 // (the result of parse() complies with this)
 export type ParsedTransactionWitnessArguments = {
-  command: CommandType.WITNESS_TRANSACTION | CommandType.EMACS_WITNESS_TRANSACTION,
+  command: CommandType.WITNESS_TRANSACTION,
   network: Network,
   rawTxFileData?: RawTxFileData,
   txFileData?: TxFileData,

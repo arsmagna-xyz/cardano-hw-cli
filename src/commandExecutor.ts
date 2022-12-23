@@ -18,7 +18,6 @@ import {
   ParsedTransactionSignArguments,
   ParsedTransactionPolicyIdArguments,
   ParsedTransactionWitnessArguments,
-  ParsedETransactionWitnessArguments,
   ParsedVerificationKeyArguments,
   ParsedOpCertArguments,
   ParsedNodeKeyGenArguments,
@@ -204,7 +203,6 @@ const CommandExecutor = async () => {
     } = await cryptoProvider.witnessTx(signingParameters, args.changeOutputKeyFileData)
     const txWitnesses = [...byronWitnesses, ...shelleyWitnesses]
 
-    console.log('W', txWitnesses)
     const txWitnessOutputs: WitnessOutput[] = []
     for (let i = 0; i < args.hwSigningFileData.length; i += 1) {
       const signingFilePath = args.hwSigningFileData[i].path
@@ -227,29 +225,6 @@ const CommandExecutor = async () => {
         console.log(`Warning! A superfluous output file specified (${i + 1} of ${args.outFiles.length}), the file was not written to.`)
       }
     }
-  }
-
-  const createETxWitnesses = async (args: ParsedETransactionWitnessArguments) => {
-    let rawTx: InteropLib.RawTransaction | undefined
-    validateTxBeforeSigning(args.txFileData!.cborHex)
-    const txCbor = Buffer.from(args.txFileData!.cborHex, 'hex')
-    const tx = InteropLib.decodeTx(txCbor)
-
-    const txBody = (rawTx?.body ?? tx?.body)!
-    const era = args.txFileData?.era!
-    const signingParameters: SigningParameters = {
-      signingMode: SigningMode.ORDINARY_TRANSACTION,
-      rawTx,
-      tx,
-      txBodyHashHex: getTxBodyHash(txBody),
-      hwSigningFileData: [],
-      paths: args.paths,
-      network: args.network,
-      era,
-      derivationType: args.derivationType,
-    }
-    validateWitnessing(signingParameters)
-    const wit = await cryptoProvider.exwitnessTx(signingParameters, [])
   }
 
   const createNodeSigningKeyFiles = async (args: ParsedNodeKeyGenArguments) => {
@@ -328,7 +303,6 @@ const CommandExecutor = async () => {
     createSignedTx,
     createTxPolicyId,
     createTxWitnesses,
-    createETxWitnesses,
     createNodeSigningKeyFiles,
     createSignedOperationalCertificate,
     createCatalystVotingKeyRegistrationMetadata,

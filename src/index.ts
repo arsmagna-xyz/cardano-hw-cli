@@ -64,10 +64,8 @@ const executeCommand = async (): Promise<ExitCode> => {
       await commandExecutor.createTxPolicyId(parsedArgs)
       break
     case (CommandType.WITNESS_TRANSACTION):
-      await commandExecutor.createTxWitnesses(parsedArgs)
-      break
     case (CommandType.EMACS_WITNESS_TRANSACTION):
-      await commandExecutor.createETxWitnesses(parsedArgs)
+      await commandExecutor.createTxWitnesses(parsedArgs)
       break
     case (CommandType.NODE_KEY_GEN):
       await commandExecutor.createNodeSigningKeyFiles(parsedArgs)

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint quote-props: ["error", "consistent"] */
 import {
-  parseAddressFile,
+  extractHWSigningData,
   parseHwSigningFile,
   parseNetwork,
   parseBIP32Path,
@@ -118,18 +118,13 @@ const txSigningArgs = {
     type: (path: string) => parseHwSigningFile(path),
     help: 'Input filepath of change output file.',
   },
-  ...derivationTypeArg,
-}
-
-const txSigningFilesArgs = {
-  '--hw-signing-file': {
-    dest: 'hwSigningFileData',
+  '--out-file': {
     required: true,
     action: 'append',
-    type: (path: string) => parseHwSigningFile(path),
-    help: 'Input filepath of the hardware wallet signing file.',
+    dest: 'outFiles',
+    help: 'Output filepath.',
   },
-  ...txSigningArgs,
+  ...derivationTypeArg,
 }
 
 const opCertSigningArgs = {
@@ -266,21 +261,21 @@ export const parserConfig = {
     },
     'exwitness': {
       ...txSigningArgs,
-      '--path': {
+      '--sign-request': {
         required: true,
-        action: 'append',
-        type: (path: string) => parseBIP32Path(path),
-        dest: 'paths',
-        help: 'Derivation path to the key to sign with.',
+        type: (str: string) => JSON.parse(str).map((request) => extractHWSigningData(request)),
+        dest: 'hwSigningFileData',
+        help: 'JSON string with signature request',
       },
     },
     'witness': {
-      ...txSigningFilesArgs,
-      '--out-file': {
+      ...txSigningArgs,
+      '--hw-signing-file': {
+        dest: 'hwSigningFileData',
         required: true,
         action: 'append',
-        dest: 'outFiles',
-        help: 'Output filepath.',
+        type: (path: string) => parseHwSigningFile(path),
+        help: 'Input filepath of the hardware wallet signing file.',
       },
     },
     'validate-raw': {

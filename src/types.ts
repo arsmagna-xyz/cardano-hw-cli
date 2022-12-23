@@ -185,21 +185,13 @@ export type ParsedTransactionPolicyIdArguments = {
 // exctly one of rawTxFileData vs. txFileData should be present
 // (the result of parse() complies with this)
 export type ParsedTransactionWitnessArguments = {
-  command: CommandType.WITNESS_TRANSACTION,
+  command: CommandType.WITNESS_TRANSACTION | CommandType.EMACS_WITNESS_TRANSACTION,
   network: Network,
   rawTxFileData?: RawTxFileData,
   txFileData?: TxFileData,
   hwSigningFileData: HwSigningData[],
   outFiles: string[],
   changeOutputKeyFileData: HwSigningData[],
-  derivationType?: DerivationType,
-}
-
-export type ParsedETransactionWitnessArguments = {
-  command: CommandType.EMACS_WITNESS_TRANSACTION,
-  network: Network,
-  txFileData?: TxFileData,
-  paths: BIP32Path[],
   derivationType?: DerivationType,
 }
 
@@ -264,7 +256,6 @@ export type ParsedArguments =
   | ParsedTransactionSignArguments
   | ParsedTransactionPolicyIdArguments
   | ParsedTransactionWitnessArguments
-  | ParsedETransactionWitnessArguments
   | ParsedTransactionValidateRawArguments
   | ParsedTransactionValidateArguments
   | ParsedTransactionTransformRawArguments
